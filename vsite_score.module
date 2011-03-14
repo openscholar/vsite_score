@@ -45,7 +45,29 @@ function vsite_score_views_api() {
  */
 function vsite_score_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
+    case 'insert':
+      $q = db_query('SELECT SUM(energy) AS total_energy FROM {radioactivity}
+  														INNER JOIN {node} ON id = nid
+  														INNER JOIN {og_ancestry} USING (nid)
+  														WHERE group_nid = %d GROUP BY decay_profile', key($node->og_groups));
+
+      while ($r = db_fetch_array($q)) {
+        $energy = array(
+          'id' => key($node->og_groups),
+          'class' => 'node',
+          'decay_profile' => $r['decay_profile'],
+          'energy' => $r['total_energy'],
+        );
+        $energy = (object) $energy;
+        drupal_write_record('radioactivity', $energy, 'id');
+      }
+
+      // the other option is digging through decay profiles manually,
+      // looking for the exact energy for adding a node type and adding that
+      // to the vsite's energy.
+    break;
     case 'view':
+      print_r($node);
       // group = key($node->og->groups);
   }
 }
