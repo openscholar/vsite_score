@@ -1,16 +1,5 @@
 <?php
 
-function vsite_score_menu() {
-  $menu = array();
-  $menu['score'] = array(
-    'title' => 'Vsite Score',
-    'page callback' => 'vsite_score_page',
-    'access callback' => true,
-    'type' => MENU_CALLBACK,
-  );
-  return $menu;
-}
-
 function vsite_score_radioactivity_info() {
   $q = db_query('SELECT type, name FROM {node_type}');
   $types = array();
@@ -31,40 +20,12 @@ function vsite_score_radioactivity_info() {
   );
 }
 
-function vsite_score_page() {
-  $vsite = vsite_get_vsite();
-
-  $q = db_query("SELECT nid, (SELECT SUM(energy) FROM {radioactivity}
-  														INNER JOIN {node} ON id = nid
-  														INNER JOIN {og_ancestry} USING (nid)
-  														WHERE group_nid = n.nid) AS score
-  							FROM {node} AS n WHERE type = 'vsite' ORDER BY score DESC LIMIT 5");
-
-  $s = '<pre>';
-  while ($r = db_fetch_array($q)) {
-   // $s .= print_r($r,1);
-  }
-  $s .= print_r(radioactivity_get_decay_profiles(),1);
-  $s .= '</pre>';
-  return $s;
-}
-
 /**
  * Implementation of hook_views_api().
  */
 function vsite_score_views_api() {
   return array(
     'api' => 2,
-  );
-}
-
-function vsite_score_views_handlers() {
-  return array (
-    'handlers' => array (
-      'vsite_score_handler_sort_total_score' => array (
-        'parent' => 'views_handlers_sort',
-      ),
-    ),
   );
 }
 
@@ -75,6 +36,13 @@ function vsite_score_views_handlers() {
 function vsite_score_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
     case 'insert':
+
+      if (is_array($node->og_groups)) {
+        foreach ($node->og_groups as $og) {
+          radioactivity_add_energy($og, 'vsite', $node->type.'_create');
+        }
+      }
+
       /*
       $q = db_query('SELECT SUM(energy) AS total_energy FROM {radioactivity}
   														INNER JOIN {node} ON id = nid
@@ -98,18 +66,38 @@ function vsite_score_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 
       // or, adding a new type that sets the radioactivity for creation events straight to vsite
 
-      if (is_array($node->og_groups)) {
-        foreach ($node->og_groups as $og) {
-          radioactivity_add_energy($og, 'vsite', $node->type.'_create');
-        }
-      }
-    break;
-    case 'view':
-      print_r($node);
-      // group = key($node->og->groups);
-    break;
-    case 'load':
-
     break;
   }
 }
+
+// ---------------------------------
+// CODE FOR EXPERIMENTATION PURPOSES
+function vsite_score_menu() {
+  $menu = array();
+  $menu['score'] = array(
+    'title' => 'Vsite Score',
+    'page callback' => 'vsite_score_page',
+    'access callback' => true,
+    'type' => MENU_CALLBACK,
+  );
+  return $menu;
+}
+
+function vsite_score_page() {
+  $vsite = vsite_get_vsite();
+
+  $q = db_query("SELECT nid, (SELECT SUM(energy) FROM {radioactivity}
+  														INNER JOIN {node} ON id = nid
+  														INNER JOIN {og_ancestry} USING (nid)
+  														WHERE group_nid = n.nid) AS score
+  							FROM {node} AS n WHERE type = 'vsite' ORDER BY score DESC LIMIT 5");
+
+  $s = '<pre>';
+  while ($r = db_fetch_array($q)) {
+   // $s .= print_r($r,1);
+  }
+  $s .= print_r(radioactivity_get_decay_profiles(),1);
+  $s .= '</pre>';
+  return $s;
+}
+

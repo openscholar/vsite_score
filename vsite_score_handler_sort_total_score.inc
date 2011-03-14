@@ -29,7 +29,7 @@ class vsite_score_handler_sort_total_score extends views_handler_sort {
   														INNER JOIN {og_ancestry} AS vs_og USING (nid)
   														WHERE vs_og.group_nid = n.nid)';
 */
-    $sort_select = '(SELECT energy FROM {radioactivity} WHERE class="vsite" AND decay_profile = '.$this->options['decay_profile'].' AND id = nid)';
+    $sort_select = '(SELECT energy FROM {radioactivity} WHERE class="vsite" AND decay_profile = '.$this->options['decay_profile'].' AND id = node.nid)';
 
     $this->query->add_orderby(NULL, $sort_select, $this->options['order'], 'total_score');
   }
