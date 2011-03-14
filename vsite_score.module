@@ -44,7 +44,7 @@ function vsite_score_page() {
   while ($r = db_fetch_array($q)) {
    // $s .= print_r($r,1);
   }
-  $s .= print_r(radioactivity_get_radioactivity_info(),1);
+  $s .= print_r(radioactivity_get_decay_profiles(),1);
   $s .= '</pre>';
   return $s;
 }
@@ -55,6 +55,16 @@ function vsite_score_page() {
 function vsite_score_views_api() {
   return array(
     'api' => 2,
+  );
+}
+
+function vsite_score_views_handlers() {
+  return array (
+    'handlers' => array (
+      'vsite_score_handler_sort_total_score' => array (
+        'parent' => 'views_handlers_sort',
+      ),
+    ),
   );
 }
 

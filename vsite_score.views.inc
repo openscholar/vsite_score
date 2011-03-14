@@ -1,15 +1,5 @@
 <?php
-
-function vsite_score_views_handlers() {
-  return array (
-    'handlers' => array (
-      'vsite_score_handler_sort_total_score' => array (
-        'parent' => 'views_handlers_sort',
-      ),
-    ),
-  );
-}
-
+/*
 function vsite_score_views_data() {
   $data = array();
 
@@ -23,4 +13,4 @@ function vsite_score_views_data() {
   );
 
   return $data;
-}
+}*/
