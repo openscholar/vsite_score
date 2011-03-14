@@ -33,6 +33,14 @@ function vsite_score_views_data() {
                                    'value' => $dpid,
                                    'numeric' => TRUE)));
 
+    $data[$table_alias]['energy'] = array(
+      'title' => t('Vsite energy'),
+      'help' => t('The energy of the Vsite.'),
+      'sort' => array(
+      	'views_handler_sort'
+     	)
+    );
+
     // energy field
     $data[$table_alias]['score'] = array(
   		'title' => t('Vsite score'),

@@ -2,14 +2,16 @@
 class vsite_score_handler_sort_total_score extends views_handler_sort {
 
   function option_definition() {
-    $options = parent::option_definition();
+    $options = array();
 
     $options['decay_profile'] = array('default' => '1');
+    $options['order'] = array('default' => 'DESC');
 
     return $options;
   }
 
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
     $options = array();
     $dp = radioactivity_get_decay_profiles();
     foreach ($dp as $k => $p) {
