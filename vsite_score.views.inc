@@ -38,7 +38,7 @@ function vsite_score_views_data() {
       'help' => t('The energy of the Vsite.'),
       'sort' => array(
       	'views_handler_sort'
-     	)
+     	),
     );
 
     // energy field
