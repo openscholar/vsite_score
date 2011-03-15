@@ -1,15 +1,5 @@
 <?php
 
-function vsite_score_views_handlers() {
-  return array (
-    'handlers' => array (
-      'vsite_score_handler_sort_total_score' => array (
-        'parent' => 'views_handler_sort',
-      ),
-    ),
-  );
-}
-
 function vsite_score_views_data() {
   require_once drupal_get_path('module', 'radioactivity') .'/radioactivity.inc';
 
@@ -34,20 +24,11 @@ function vsite_score_views_data() {
                                    'numeric' => TRUE)));
 
     $data[$table_alias]['energy'] = array(
-      'title' => t('Vsite energy'),
-      'help' => t('The energy of the Vsite.'),
+      'title' => t('Vsite score'),
+      'help' => t('The total score of the Vsite.'),
       'sort' => array(
       	'views_handler_sort'
      	),
-    );
-
-    // energy field
-    $data[$table_alias]['score'] = array(
-  		'title' => t('Vsite score'),
-      'help' => t('The score of the vsite.'),
-      'sort' => array(
-      	'handler' => 'vsite_score_handler_sort_total_score'
-      ),
     );
   }
 
