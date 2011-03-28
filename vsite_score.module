@@ -45,3 +45,27 @@ function vsite_score_views_api() {
     'api' => 2,
   );
 }
+
+function vsite_score_recalculate() {
+  // gets a score for everyone
+
+  // get a list of all vsites
+  $q = db_query("SELECT nid, title FROM {og} INNER JOIN {node} USING (nid)");
+  $vsites = array();
+  while ($r = db_fetch_array($q)) {
+    // get a score for them
+    $totals = array();
+    $q_count = db_query("SELECT type, COUNT(*) AS count FROM node AS vs_n INNER JOIN og_ancestry AS vs_og USING (nid) WHERE group_nid = %d GROUP BY vs_n.type", $r['nid']);
+    while ($r_count = mysql_fetch_array($q_count)) {
+      foreach (radioactivity_get_energies_for_source(0, 'vsite', $r['type'].'_create') as $dp_id => $score) {
+        $totals[$dp_id] += $score * $r['count'];
+      }
+    }
+    $vsites[$r['nid']] = array('title' => $r['title']);
+    foreach ($totals as $dp_id => $score) {
+      $vsites[$r['nid']]['dp_'.$dp_id] = $score;
+    }
+  }
+
+  return $vsites;
+}
